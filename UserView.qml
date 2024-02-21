@@ -23,9 +23,9 @@ import QtQuick.Controls 2.12 as QQC2
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
-import Cute.Accounts 1.0 as Accounts
-import Cute.System 1.0 as System
-import CuteUI 1.0 as CuteUI
+import Lingmo.Accounts 1.0 as Accounts
+import Lingmo.System 1.0 as System
+import LingmoUI 1.0 as CuteUI
 
 ListView {
     id: control
