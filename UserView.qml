@@ -25,7 +25,7 @@ import QtGraphicalEffects 1.0
 
 import Lingmo.Accounts 1.0 as Accounts
 import Lingmo.System 1.0 as System
-import LingmoUI 1.0 as LingmoUI
+import LingmoUI.CompatibleModule 3.0 as LingmoU
 
 ListView {
     id: control
