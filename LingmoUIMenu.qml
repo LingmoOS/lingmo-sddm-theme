@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Templates 2.12 as T
-import QtQuick.Window 2.12
-import LingmoUI.CompatibleModule 3.0 as LingmoUI
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Templates as T
+import QtQuick.Window
+import LingmoUI.CompatibleModule as LingmoUI
 import Qt5Compat.GraphicalEffects
 import "./"
 

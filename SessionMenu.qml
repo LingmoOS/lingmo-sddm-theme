@@ -1,53 +1,45 @@
+
+
 /*
- * Copyright (C) 2021 LingmoOS.
+ * SPDX-FileCopyrightText: 2021 Reion Wong <reionwong@gmail.com>
+ * SPDX-FileCopyrightText: 2024 Elysia <elysia@lingmo.org>
  *
- * Author:     Reion Wong <reionwong@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: GPL-3.0
  */
-
-import QtQuick 2.12
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick
+import QtQuick.Controls as QC
 import Qt5Compat.GraphicalEffects
-import LingmoUI.CompatibleModule 3.0 as LingmoU
+import LingmoUI.CompatibleModule as LingmoUI
+import SddmComponents
 
-ToolButton {
+QC.ToolButton {
     id: root
 
     property int currentIndex: -1
     property int rootFontSize
 
-    visible: menu.items.length > 1
-    implicitHeight: _currentLabel.implicitHeight
-    implicitWidth: _currentLabel.implicitWidth
+    visible: menu.count > 1
+    implicitHeight: _currentLabel.implicitHeight + 4
+    implicitWidth: _currentLabel.implicitWidth + 8
 
-    style: ButtonStyle {
-        background: Rectangle {
-            color: "transparent"
-        }
-    }
-
-    Label {
+    contentItem: QC.Label {
         id: _currentLabel
         anchors.centerIn: parent
         color: "white"
         font.pointSize: rootFontSize
-        text: instantiator.objectAt(currentIndex).text || ""
+        text: {
+            instantiator.objectAt(currentIndex).text || ""
+        }
+    }
+
+    background: Rectangle {
+        color: "transparent"
+        border.color: "white"
+        border.width: 1
     }
 
     DropShadow {
+        id: dropShadow
         anchors.fill: _currentLabel
         source: _currentLabel
         z: -1
@@ -61,18 +53,20 @@ ToolButton {
         visible: true
     }
 
+    onClicked: menu.open()
+
     Component.onCompleted: {
         currentIndex = sessionModel.lastIndex
     }
 
-    menu: Menu {
+    QC.Menu {
         id: menu
         Instantiator {
             id: instantiator
             model: sessionModel
-            onObjectAdded: menu.insertItem(index, object)
-            onObjectRemoved: menu.removeItem( object )
-            delegate: MenuItem {
+            onObjectAdded: (index, object) => menu.insertItem(index, object)
+            onObjectRemoved: (index, object) => menu.removeItem(object)
+            delegate: QC.MenuItem {
                 text: model.name
                 onTriggered: {
                     root.currentIndex = model.index
