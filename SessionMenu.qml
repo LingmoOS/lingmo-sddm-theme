@@ -7,35 +7,62 @@
  * SPDX-License-Identifier: GPL-3.0
  */
 import QtQuick
-import QtQuick.Controls as QC
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import LingmoUI.CompatibleModule as LingmoUI
 import SddmComponents
 
-QC.ToolButton {
+import QtQuick.Controls.LingmoStyle
+import LingmoUI
+
+ToolButton {
     id: root
 
     property int currentIndex: -1
     property int rootFontSize
 
     visible: menu.count > 1
-    implicitHeight: _currentLabel.implicitHeight + 4
-    implicitWidth: _currentLabel.implicitWidth + 8
+    implicitHeight: _currentLabel.implicitHeight + 10
+    implicitWidth: _currentLabel.implicitWidth + 16
 
-    contentItem: QC.Label {
+    padding: 6
+        spacing: 8
+
+        icon.width: 20
+        icon.height: 20
+        icon.color: Color.transparent(control.textColor, enabled ? 1.0 : 0.2)
+
+
+    contentItem: IconLabel {
         id: _currentLabel
         anchors.centerIn: parent
-        color: "white"
-        font.pointSize: rootFontSize
+        spacing: root.spacing
+        mirrored: root.mirrored
+        display: root.display
+
+        icon: root.icon
         text: {
             instantiator.objectAt(currentIndex).text || ""
         }
+        font: root.font
+        color: root.textColor
     }
 
-    background: Rectangle {
-        color: "transparent"
-        border.color: "white"
-        border.width: 1
+
+    background: LingmoControlBackground {
+        implicitWidth: 30
+        implicitHeight: 30
+        radius: LingmoUnits.smallRadius
+        color: {
+            if (!enabled) {
+                return disableColor
+            }
+            return hovered ? hoverColor : normalColor
+        }
+        shadow: !pressed && enabled
+        LingmoFocusRectangle {
+            visible: control.activeFocus
+            radius: LingmoUnits.smallRadius
+        }
     }
 
     DropShadow {
@@ -45,7 +72,7 @@ QC.ToolButton {
         z: -1
         horizontalOffset: 1
         verticalOffset: 1
-        radius: 15
+        radius: LingmoUnits.smallRadius
         samples: radius * 4
         spread: 0.35
         color: Qt.rgba(0, 0, 0, 0.2)
@@ -59,14 +86,14 @@ QC.ToolButton {
         currentIndex = sessionModel.lastIndex
     }
 
-    QC.Menu {
+    LingmoMenu {
         id: menu
         Instantiator {
             id: instantiator
             model: sessionModel
             onObjectAdded: (index, object) => menu.insertItem(index, object)
             onObjectRemoved: (index, object) => menu.removeItem(object)
-            delegate: QC.MenuItem {
+            delegate: LingmoMenuItem {
                 text: model.name
                 onTriggered: {
                     root.currentIndex = model.index
