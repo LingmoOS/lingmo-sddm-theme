@@ -25,12 +25,11 @@ ToolButton {
     implicitWidth: _currentLabel.implicitWidth + 16
 
     padding: 6
-        spacing: 8
+    spacing: 8
 
-        icon.width: 20
-        icon.height: 20
-        icon.color: Color.transparent(control.textColor, enabled ? 1.0 : 0.2)
-
+    icon.width: 20
+    icon.height: 20
+    icon.color: Color.transparent(root.textColor, enabled ? 1.0 : 0.2)
 
     contentItem: IconLabel {
         id: _currentLabel
@@ -47,7 +46,6 @@ ToolButton {
         color: root.textColor
     }
 
-
     background: LingmoControlBackground {
         implicitWidth: 30
         implicitHeight: 30
@@ -60,7 +58,7 @@ ToolButton {
         }
         shadow: !pressed && enabled
         LingmoFocusRectangle {
-            visible: control.activeFocus
+            visible: root.activeFocus
             radius: LingmoUnits.smallRadius
         }
     }
