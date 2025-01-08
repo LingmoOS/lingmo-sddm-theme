@@ -1,27 +1,18 @@
-/*
- * Copyright (C) 2021 LingmoOS.
- *
- * Author:     Reion Wong <reionwong@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
-import QtQuick 2.12
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtGraphicalEffects 1.0
-import LingmoUI 1.0 as LingmoUI
+
+/*
+ * SPDX-FileCopyrightText: 2021 Reion Wong <reionwong@gmail.com>
+ * SPDX-FileCopyrightText: 2024 Elysia <elysia@lingmo.org>
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ */
+import QtQuick
+import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
+import SddmComponents
+
+import QtQuick.Controls.LingmoStyle
+import LingmoUI
 
 ToolButton {
     id: root
@@ -29,31 +20,57 @@ ToolButton {
     property int currentIndex: -1
     property int rootFontSize
 
-    visible: menu.items.length > 1
-    implicitHeight: _currentLabel.implicitHeight
-    implicitWidth: _currentLabel.implicitWidth
+    visible: menu.count > 1
+    implicitHeight: _currentLabel.implicitHeight + 10
+    implicitWidth: _currentLabel.implicitWidth + 16
 
-    style: ButtonStyle {
-        background: Rectangle {
-            color: "transparent"
+    padding: 6
+    spacing: 8
+
+    icon.width: 20
+    icon.height: 20
+    icon.color: Color.transparent(root.textColor, enabled ? 1.0 : 0.2)
+
+    contentItem: IconLabel {
+        id: _currentLabel
+        anchors.centerIn: parent
+        spacing: root.spacing
+        mirrored: root.mirrored
+        display: root.display
+
+        icon: root.icon
+        text: {
+            instantiator.objectAt(currentIndex).text || ""
+        }
+        font: root.font
+        color: root.textColor
+    }
+
+    background: LingmoControlBackground {
+        implicitWidth: 30
+        implicitHeight: 30
+        radius: LingmoUnits.smallRadius
+        color: {
+            if (!enabled) {
+                return disableColor
+            }
+            return hovered ? hoverColor : normalColor
+        }
+        shadow: !pressed && enabled
+        LingmoFocusRectangle {
+            visible: root.activeFocus
+            radius: LingmoUnits.smallRadius
         }
     }
 
-    Label {
-        id: _currentLabel
-        anchors.centerIn: parent
-        color: "white"
-        font.pointSize: rootFontSize
-        text: instantiator.objectAt(currentIndex).text || ""
-    }
-
     DropShadow {
+        id: dropShadow
         anchors.fill: _currentLabel
         source: _currentLabel
         z: -1
         horizontalOffset: 1
         verticalOffset: 1
-        radius: 15
+        radius: LingmoUnits.smallRadius
         samples: radius * 4
         spread: 0.35
         color: Qt.rgba(0, 0, 0, 0.2)
@@ -61,18 +78,20 @@ ToolButton {
         visible: true
     }
 
+    onClicked: menu.open()
+
     Component.onCompleted: {
         currentIndex = sessionModel.lastIndex
     }
 
-    menu: Menu {
+    LingmoMenu {
         id: menu
         Instantiator {
             id: instantiator
             model: sessionModel
-            onObjectAdded: menu.insertItem(index, object)
-            onObjectRemoved: menu.removeItem( object )
-            delegate: MenuItem {
+            onObjectAdded: (index, object) => menu.insertItem(index, object)
+            onObjectRemoved: (index, object) => menu.removeItem(object)
+            delegate: LingmoMenuItem {
                 text: model.name
                 onTriggered: {
                     root.currentIndex = model.index

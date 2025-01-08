@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
 
 project(lingmo-sddm-theme)
 
@@ -13,9 +13,12 @@ install(FILES UserView.qml DESTINATION /usr/share/sddm/themes/lingmo)
 install(FILES LingmoUIMenu.qml DESTINATION /usr/share/sddm/themes/lingmo)
 install(FILES LingmoUIMenuItem.qml DESTINATION /usr/share/sddm/themes/lingmo)
 install(FILES system-shutdown-symbolic.svg DESTINATION /usr/share/sddm/themes/lingmo)
-
-install(FILES theme.conf DESTINATION /usr/share/sddm/themes/lingmo)
-install(FILES hidpi.conf DESTINATION /etc/sddm.conf.d/)
-install(FILES sddm.conf DESTINATION /etc/)
-
 install(DIRECTORY faces DESTINATION /usr/share/sddm/themes/lingmo)
+install(FILES theme.conf DESTINATION /usr/share/sddm/themes/lingmo)
+install(FILES screenshot.png DESTINATION /usr/share/sddm/themes/lingmo)
+install(FILES metadata.desktop DESTINATION /usr/share/sddm/themes/lingmo)
+
+install(FILES hidpi.conf DESTINATION /etc/sddm.conf.d/)
+install(FILES sddm_lingmo.conf DESTINATION /etc/sddm.conf.d/)
+
+
