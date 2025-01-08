@@ -27,6 +27,7 @@ import Qt5Compat.GraphicalEffects
 import Lingmo.Accounts as Accounts
 import Lingmo.System as System
 import LingmoUI.CompatibleModule as LingmoUI
+import LingmoUI
 
 import SddmComponents
 import "./"
@@ -243,23 +244,33 @@ Item {
         anchors.bottomMargin: LingmoUI.Units.smallSpacing * 1.5
 
         width: 50
-        height: 50 + LingmoUI.Units.largeSpacing
+        height: 40 + LingmoUI.Units.largeSpacing
 
-
-        LingmoUI.RoundImageButton {
-            anchors.fill: parent
+        LingmoIconButton {
             width: 50
-            height: 50 + LingmoUI.Units.largeSpacing
+            height: 40 + LingmoUI.Units.largeSpacing
+            anchors.fill: parent
+            iconSource: LingmoIcons.PowerButton
+            iconSize: 30
+            display: QQC2.Button.IconOnly
 
-            size: 50
-            source: "system-shutdown-symbolic.svg"
-            iconMargins: LingmoUI.Units.largeSpacing
-
-            // anchors.top: message.bottom
-            // anchors.topMargin: LingmoUI.Units.largeSpacing
-            // anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: actionMenu.popup()
+            onClicked: {actionMenu.popup()}
         }
+
+        // LingmoUI.RoundImageButton {
+        //     anchors.fill: parent
+        //     width: 50
+        //     height: 50 + LingmoUI.Units.largeSpacing
+
+        //     size: 50
+        //     source: "./system-shutdown-symbolic.svg"
+        //     iconMargins: LingmoUI.Units.largeSpacing
+
+        //     // anchors.top: message.bottom
+        //     // anchors.topMargin: LingmoUI.Units.largeSpacing
+        //     // anchors.horizontalCenter: parent.horizontalCenter
+        //     onClicked: actionMenu.popup()
+        // }
     }
 
     LingmoUIMenu {
@@ -284,18 +295,6 @@ Item {
         }
     }
 
-    // LingmoUI.RoundImageButton {
-    //     width: 50
-    //     height: 50
-
-    //     size: 50
-    //     source: "system-shutdown-symbolic.svg"
-    //     iconMargins: 10
-
-    //     anchors.top: message.bottom
-    //     anchors.topMargin: LingmoUI.Units.largeSpacing
-    //     anchors.horizontalCenter: parent.horizontalCenter
-    // }
 
     QQC2.Label {
         id: message
