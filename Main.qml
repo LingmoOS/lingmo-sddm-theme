@@ -79,7 +79,7 @@ Item {
     Keys.onPressed: {
         if (!loginVisible && (event.key === Qt.Key_Space || event.key === Qt.Key_Return)) {
             startLoginAnimation()
-            event.accepted = true
+            isPressing = false
         }
     }
 
