@@ -1,23 +1,3 @@
-/*
- * Copyright (C) 2024 LingmoOS.
- *
- * Author:     Reion Wong <reionwong@gmail.com>
- * Maintainer: Lingmo OS Team <team@lingmo.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12 as QQC2
@@ -60,7 +40,6 @@ Item {
     }
 
     function checkTimeColor() {
-        // 简单的颜色检测示例，实际实现可能需要更多优化
         var imageBrightness = wallpaperImage.colorAt(0, 0).lightness
         timeColor = imageBrightness > 0.5 ? "black" : "white"
     }
@@ -90,10 +69,17 @@ Item {
         dateLabel.updateInfo()
     }
 
-    // 按下任意键进入登录页面
+    // // 按下任意键进入登录页面
+    // Keys.onPressed: {
+    //     if (!loginVisible) {
+    //         startLoginAnimation()
+    //     }
+    // }
+
     Keys.onPressed: {
-        if (!loginVisible) {
+        if (!loginVisible && (event.key === Qt.Key_Space || event.key === Qt.Key_Return)) {
             startLoginAnimation()
+            event.accepted = true
         }
     }
 
@@ -202,7 +188,7 @@ Item {
             samples: radius * 4
             spread: 0.35
             color: Qt.rgba(0, 0, 0, 0.8)
-            opacity: 0.1
+            opacity: 0
             visible: true
         }
 
@@ -216,7 +202,7 @@ Item {
             samples: radius * 4
             spread: 0.35
             color: Qt.rgba(0, 0, 0, 0.8)
-            opacity: 0.1
+            opacity: 0
             visible: true
         }
     }
