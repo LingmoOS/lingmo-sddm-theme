@@ -17,8 +17,6 @@ Item {
     property string notificationMessage
     property bool loginVisible: false  // 登录界面显示状态
     property color timeColor: "white"  // 时间颜色，根据背景亮度调整
-    property real initialY: timeLabel.y // 初始时间标签的y坐标
-    property real initialBlur: 0 // 初始模糊半径
 
     LayoutMirroring.enabled: Qt.locale().textDirection == Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
@@ -40,6 +38,7 @@ Item {
     }
 
     function checkTimeColor() {
+        // 简单的颜色检测示例，实际实现可能需要更多优化
         var imageBrightness = wallpaperImage.colorAt(0, 0).lightness
         timeColor = imageBrightness > 0.5 ? "black" : "white"
     }
@@ -47,10 +46,10 @@ Item {
     FastBlur {
         id: wallpaperBlur
         anchors.fill: parent
-        radius: initialBlur
+        radius: 64
         source: wallpaperImage
         cached: true
-        visible: true  // 始终显示，但可以通过radius控制模糊程度
+        visible: loginVisible  // 登录界面显示时模糊
     }
 
     Timer {
@@ -69,49 +68,27 @@ Item {
         dateLabel.updateInfo()
     }
 
-    // // 按下任意键进入登录页面
-    // Keys.onPressed: {
-    //     if (!loginVisible) {
-    //         startLoginAnimation()
-    //     }
-    // }
-
     Keys.onPressed: {
-        if (!loginVisible && (event.key === Qt.Key_Space || event.key === Qt.Key_Return)) {
-            startLoginAnimation()
-            isPressing = false
+        if (!loginVisible) {
+            loginVisible = true
         }
     }
 
-    MouseArea {
-        id: rootMouseArea
-        anchors.fill: parent
-        property real startY: 0
-        property bool isPressing: false
-
-        onPressed: {
-            if (!loginVisible) {
-                startY = mouseY
-                isPressing = true
-            }
-        }
-
-        onPositionChanged: {
-            if (isPressing && mouseY < startY) {
-                var deltaY = startY - mouseY
-                if (deltaY > 5) { // 只需要滑动一点点
-                    startLoginAnimation()
-                    isPressing = false
-                }
-            }
-        }
-
-        onReleased: {
-            isPressing = false
-        }
-
-        acceptedButtons: Qt.LeftButton
-    }
+    // MouseArea {
+    //     id: rootMouseArea
+    //     anchors.fill: parent
+    //     onClicked: {
+    //         if (!loginVisible) {
+    //             loginVisible = true
+    //         }
+    //     }
+    //     onPressAndHold: {
+    //         if (!loginVisible) {
+    //             loginVisible = true
+    //         }
+    //     }
+    //     acceptedButtons: Qt.LeftButton | Qt.RightButton
+    // }
 
     Item {
         id: _topItem
@@ -129,24 +106,20 @@ Item {
             font.pointSize: 60
             font.bold: true  // 加粗时间文本
             color: root.timeColor  // 自动反色
-            opacity: 1  // 初始不透明
+            opacity: loginVisible ? 0 : 1  // 动态控制透明度
 
             function updateInfo() {
                 timeLabel.text = new Date().toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
             }
 
-            NumberAnimation on y {
-                id: timeYAnimation
-                from: 0
-                to: -root.height * 0.2
-                duration: 1000
+            Behavior on opacity {
+                OpacityAnimator { duration: 500 }
             }
 
-            NumberAnimation on opacity {
-                id: timeOpacityAnimation
-                from: 1
-                to: 0
-                duration: 1000
+            NumberAnimation on y {
+                from: 0
+                to: loginVisible ? -root.height * 0.2 : 0
+                duration: 500
             }
         }
 
@@ -157,24 +130,57 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             font.pointSize: 24
             color: root.timeColor  // 自动反色
-            opacity: 1  // 初始不透明
+            opacity: loginVisible ? 0 : 1  // 动态控制透明度
 
             function updateInfo() {
                 dateLabel.text = new Date().toLocaleDateString(Qt.locale(), Locale.LongFormat)
             }
 
-            NumberAnimation on y {
-                id: dateYAnimation
-                from: 0
-                to: -root.height * 0.2
-                duration: 1000
+            Behavior on opacity {
+                OpacityAnimator { duration: 500 }
             }
 
-            NumberAnimation on opacity {
-                id: dateOpacityAnimation
-                from: 1
-                to: 0
-                duration: 1000
+            NumberAnimation on y {
+                from: 0
+                to: loginVisible ? -root.height * 0.2 : 0
+                duration: 500
+            }
+        }
+
+        QQC2.Button {
+            id: stBtn
+            visible: !loginVisible  // 登录界面显示时隐藏
+            hoverEnabled: true
+            focusPolicy: Qt.StrongFocus
+            focus: true  // 确保按钮默认获取焦点
+            anchors.top: dateLabel.bottom
+            anchors.topMargin: 100
+            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.centerIn: parent
+            Layout.preferredHeight: 40
+            Layout.preferredWidth: 300
+            text: qsTr("↑")
+            onClicked: loginVisible = true
+
+            scale: stBtn.pressed ? 0.95 : 1.0
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 100
+                }
+            }
+
+            background: Rectangle {
+                color: LingmoUI.Theme.darkMode ? "#B6B6B6" : "white"
+                opacity: stBtn.pressed ? 0.3 : stBtn.hovered ? 0.2 : 0.3
+                radius: 100
+            }
+
+            contentItem: Text {
+                text: stBtn.text
+                color: "white"  // 设置文本颜色为白色
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
         }
 
@@ -217,7 +223,7 @@ Item {
         opacity: loginVisible ? 1 : 0
 
         Behavior on opacity {
-            OpacityAnimator { duration: 1000 }
+            OpacityAnimator { duration: 500 }
         }
 
         Rectangle {
@@ -307,7 +313,7 @@ Item {
         }
     }
 
-    Item {
+        Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.rightMargin: LingmoUI.Units.largeSpacing
@@ -399,37 +405,6 @@ Item {
         id: notificationResetTimer
         interval: 3000
         onTriggered: root.notificationMessage = ""
-    }
-
-    Timer {
-        id: idleTimer
-        interval: 30000 // 30秒
-        running: false
-        repeat: false
-        onTriggered: {
-            if (loginVisible) {
-                startIdleAnimation()
-            }
-        }
-    }
-
-    function startLoginAnimation() {
-        loginVisible = true
-        wallpaperBlur.radius = 64
-        timeLabel.y = -root.height * 0.2
-        timeLabel.opacity = 0
-        dateLabel.y = -root.height * 0.2
-        dateLabel.opacity = 0
-        idleTimer.restart()
-    }
-
-    function startIdleAnimation() {
-        loginVisible = false
-        wallpaperBlur.radius = initialBlur
-        timeLabel.y = initialY
-        timeLabel.opacity = 1
-        dateLabel.y = initialY + LingmoUI.Units.largeSpacing
-        dateLabel.opacity = 1
     }
 
     Connections {
